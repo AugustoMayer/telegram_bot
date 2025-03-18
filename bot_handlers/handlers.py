@@ -20,7 +20,8 @@ async def start(update: Update, context):
     # Get user ID
     user_id = update.effective_user.id
     if db.user_exists(user_id) == 1: await update.message.reply_text("Bem Vindo Novamente!"
-                                                                     "\n\n Para ver o clima em sua cidade, utilize /clima")
+                                                                     "\n\nPara ver o clima em sua cidade, utilize /clima"
+                                                                     "\nPara criar um novo avento na agenda, utilize /novoEvento")
     else:
         await update.message.reply_text("Bem Vindo! Sou seu assistente diário para informações como clima e eventos, é um prazer!\n"
                                         "Vamos iniciar seu cadastro, preciso que informe o nome de sua cidade!")
@@ -35,8 +36,7 @@ async def addUser(update: Update, context):
         user_id = update.effective_user.id
         db.new_user(user_id, user_city)
         await update.message.reply_text(f"Seu cadastro foi concluido {update.effective_user.name} com sucesso para a cidade ({user_city})!"
-                                        "\n\nVocê pode utilizar os comando /clima para ver o clima em sua cidade e /start para"
-                                        "verificar todos os comandos!")
+                                        "\n\nVocê pode utilizar o comando /start para verificar todos os comandos!")
         return
         
     # Invalid City or Error
@@ -64,6 +64,9 @@ async def weather(update: Update, context):
     
     await update.message.reply_text(f"O clima em {user_city} atualmente é {description} com temperatura de "
                                     f"{temp:.2f}°C.")
+    
+async def newEvent(update: Update, context):
+    return
 
 #=================================================================================
 
@@ -80,6 +83,10 @@ def addHandlers(app : Application) -> None:
         fallbacks=[]
     )
     
+    # Add conversation cicle
     app.add_handler(conversation_handler_createUser)
     # Add /clima command
     app.add_handler(CommandHandler("clima", weather))
+    
+    # Add diary commands
+    app.add_handler(CommandHandler("NovoEvento", newEvent))
